@@ -1,0 +1,44 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:provider/provider.dart';
+import 'package:testing_app/logic/favorite_provider.dart';
+import 'package:testing_app/presentation/favorites_screen.dart';
+
+void main() {
+  late FavoriteProvider favoritesList;
+
+  Widget createFavoritesScreen() => ChangeNotifierProvider<FavoriteProvider>(
+        create: (context) {
+          favoritesList = FavoriteProvider();
+          return favoritesList;
+        },
+        child: const MaterialApp(home: FavoritesPage()),
+      );
+
+  void addItems() {
+    for (var i = 0; i < 10; i += 2) {
+      favoritesList.add(i);
+    }
+  }
+
+  group('Favorites Page Widget Tests', () {
+    testWidgets('Test if ListView shows up', (tester) async {
+      await tester.pumpWidget(createFavoritesScreen());
+      addItems();
+      await tester.pumpAndSettle();
+      expect(find.byType(ListView), findsOneWidget);
+    });
+
+    testWidgets('Testing Remove Button', (tester) async {
+      await tester.pumpWidget(createFavoritesScreen());
+      addItems();
+      await tester.pumpAndSettle();
+      var totalItems = tester.widgetList(find.byIcon(Icons.close)).length;
+      await tester.tap(find.byIcon(Icons.close).first);
+      await tester.tap(find.byIcon(Icons.close).at(1));
+      await tester.pumpAndSettle();
+      expect(tester.widgetList(find.byIcon(Icons.close)).length, lessThan(totalItems));
+      expect(find.text('Removed from favorites.'), findsOneWidget);
+    });
+  });
+}
