@@ -5,9 +5,7 @@ import 'package:testing_app/logic/favorite_provider.dart';
 import 'package:testing_app/presentation/favorites_screen.dart';
 import 'package:testing_app/presentation/home_screen.dart';
 
-void main() {
-  runApp(const TestingApp());
-}
+void main() => runApp(const TestingApp());
 
 final _router = GoRouter(
   routes: [
